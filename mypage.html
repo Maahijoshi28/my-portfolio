@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MAAHI JOSHI | AI Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#050a1a',
+            slateDark: '#0a1128',
+            neonBlue: '#00d2ff',
+            emerald: '#00ff87'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(90deg, #00d2ff, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .project-card:hover {
+      box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+      border-color: rgba(0, 210, 255, 0.4);
+    }
+
+    .blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(52, 211, 153, 0.2) 100%);
+      filter: blur(80px);
+      border-radius: 50%;
+      z-index: -1;
+    }
+  </style>
+</head>
+
+<body class="bg-midnight text-slate-200">
+
+  <div class="blob top-0 left-[-100px]"></div>
+  <div class="blob bottom-0 right-[-100px]"></div>
+
+  <nav class="fixed top-0 w-full glass z-50 px-6 py-4 flex justify-between items-center">
+    <div class="text-xl font-extrabold tracking-tighter text-gradient">MJ.AI</div>
+    <div class="hidden md:flex gap-8 text-sm font-medium uppercase tracking-widest">
+      <a href="#experience" class="hover:text-neonBlue transition">Experience</a>
+      <a href="#projects" class="hover:text-neonBlue transition">Projects</a>
+      <a href="#contact" class="hover:text-neonBlue transition">Contact</a>
+    </div>
+  </nav>
+
+  <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
+    <h1 class="text-6xl md:text-8xl font-extrabold mb-6 tracking-tight">MAAHI <span class="text-gradient">JOSHI</span></h1>
+    <div class="h-8 mb-8">
+        <p id="typingText" class="text-neonBlue text-xl md:text-2xl font-light tracking-wide"></p>
+    </div>
+    <p class="max-w-xl text-slate-400 leading-relaxed text-lg">
+      Specializing in <span class="text-white font-semibold">Agentic AI</span> and <span class="text-white font-semibold">Robotic Intelligence</span>. Currently architecting cognitive engines and multi-modal action models.
+    </p>
+    <div class="mt-12 flex gap-4">
+      <a href="#projects" class="px-8 py-4 bg-gradient-to-r from-neonBlue to-emerald text-midnight rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all">Explore My Work</a>
+    </div>
+  </section>
+
+<section id="experience" class="px-6 md:px-20 py-24">
+    <h2 class="text-4xl font-bold mb-16 text-gradient">Industry Experience</h2>
+    <div class="space-y-12 max-w-4xl">
+      
+      <div class="relative pl-8 border-l border-neonBlue/30">
+        <div class="absolute w-4 h-4 bg-purple-500 rounded-full left-[-8px] top-1 shadow-[0_0_10px_#a855f7]"></div>
+        <h3 class="text-2xl font-bold">Remote Intern | IIT Kanpur (Dept. of Electrical Eng.)</h3>
+        <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Feb 2024 - Mar 2024</span>
+        <p class="mt-1 text-xs text-slate-500 italic">In collaboration with Bolt IoT</p>
+        <ul class="mt-4 text-slate-400 space-y-2 list-disc list-inside">
+          <li>Developed an **Interactive Dictionary AI** using a RAG-powered application for intelligent retrieval.</li>
+          <li>Optimized database infrastructure, significantly reducing query latency via architecture refactoring.</li>
+        </ul>
+      </div>
+
+      <div class="relative pl-8 border-l border-neonBlue/30">
+        <div class="absolute w-4 h-4 bg-neonBlue rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00d2ff]"></div>
+        <h3 class="text-2xl font-bold">AI Research Intern | Infosys Springboard</h3>
+        <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Dec 2025 - Feb 2026</span>
+        <ul class="mt-4 text-slate-400 space-y-2 list-disc list-inside">
+          <li>Architected an **Autonomous Cognitive Engine** for long-horizon research using ReAct patterns.</li>
+          <li>Integrated persistent memory through RAG pipelines for long-term context retention across datasets.</li>
+        </ul>
+      </div>
+
+      <div class="relative pl-8 border-l border-neonBlue/30">
+        <div class="absolute w-4 h-4 bg-emerald rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00ff87]"></div>
+        <h3 class="text-2xl font-bold">AIML Industrial Training | IIT Ropar (Collaboration)</h3>
+        <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Jan 2026 - Present</span>
+        <ul class="mt-4 text-slate-400 space-y-2 list-disc list-inside">
+          <li>Gaining expertise in neural network optimization and deep learning deployment pipelines.</li>
+          <li>Collaborating on large-scale data architecture, focusing on training stability and model scalability.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+  <section id="skills" class="px-6 md:px-20 py-24 bg-midnight">
+  <h2 class="text-4xl font-bold mb-16 text-gradient text-center">Technical Expertise</h2>
+  
+  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    
+    <div class="glass p-8 rounded-3xl border-t-2 border-neonBlue">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-neonBlue/20 rounded-xl text-neonBlue">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">AI & Deep Learning</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">Agentic AI</span>
+        <span class="tag">RAG Architectures</span>
+        <span class="tag">LLM Orchestration</span>
+        <span class="tag">Multi-Modal Learning</span>
+        <span class="tag">Reinforcement Learning</span>
+        <span class="tag">Visual Object Recognition</span>
+        <span class="tag">Neural Network Optimization</span>
+      </div>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border-t-2 border-emerald">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-emerald/20 rounded-xl text-emerald">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 4a2 2 0 100-4m0 4a2 2 0 110-4m-6 0a2 2 0 100-4m0 4a2 2 0 110-4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 4a2 2 0 100-4m0 4a2 2 0 110-4" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Robotics & Vision</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">Robotics Intelligence</span>
+        <span class="tag">Autonomous Navigation</span>
+        <span class="tag">Point-Cloud Processing</span>
+        <span class="tag">Motion Planning</span>
+        <span class="tag">CNN</span>
+        <span class="tag">Image Classification</span>
+      </div>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border-t-2 border-purple-500">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-purple-500/20 rounded-xl text-purple-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Languages</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">Python (Oracle Certified)</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">C / C++</span>
+        <span class="tag">HTML5 / CSS3</span>
+      </div>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border-t-2 border-amber-500">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-amber-500/20 rounded-xl text-amber-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Frameworks & DevTools</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">LangChain / LangGraph</span>
+        <span class="tag">PyTorch / TensorFlow</span>
+        <span class="tag">Flask / Express</span>
+        <span class="tag">SocketIO</span>
+        <span class="tag">LangSmith</span>
+        <span class="tag">Git / GitHub</span>
+        <span class="tag">Render / Vercel</span>
+      </div>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border-t-2 border-pink-500">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-pink-500/20 rounded-xl text-pink-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Data & Infrastructure</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">SQLite / SQL</span>
+        <span class="tag">Predictive Analytics (IBM)</span>
+        <span class="tag">Data Structures & Algorithms</span>
+        <span class="tag">RESTful APIs</span>
+      </div>
+    </div>
+
+    <div class="glass p-8 rounded-3xl border-t-2 border-cyan-400">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="p-3 bg-cyan-400/20 rounded-xl text-cyan-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Core Fundamentals</h3>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">Oracle Cloud GenAI</span>
+        <span class="tag">Infrastructure Optimization</span>
+        <span class="tag">IoT Integration</span>
+        <span class="tag">System Design</span>
+        <span class="tag">Technical Architecture</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Custom tag styling for this section */
+  .tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  .tag:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: rgba(0, 210, 255, 0.5);
+    transform: translateY(-2px);
+  }
+</style>
+<section id="projects" class="px-6 md:px-20 py-24 bg-slateDark/50">
+  <h2 class="text-4xl font-bold mb-16 text-center text-gradient">Research & Development</h2>
+  
+  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-emerald/20 rounded-2xl flex items-center justify-center mb-6 text-emerald">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">Agricultural Manipulation</h3>
+      <p class="text-slate-400 text-sm mb-4">Developed a point-cloud pipeline for object identification and collision-aware motion planning. Validated on physical robotic arm simulations.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Python</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">LangChain</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Robotics</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300 border-neonBlue/20">
+      <div class="w-12 h-12 bg-neonBlue/20 rounded-2xl flex items-center justify-center mb-6 text-neonBlue">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">Autonomous Cognitive Engine</h3>
+      <p class="text-slate-400 text-sm mb-4">Architected an agentic framework for long-horizon research using ReAct patterns and persistent memory RAG pipelines.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">LangGraph</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">AI Agents</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center mb-6 text-red-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">BharatTeleMed</h3>
+      <p class="text-slate-400 text-sm mb-4">Telemedicine platform bridging healthcare gaps. Awarded Runner-up at Tekathon (SIH 2025 Selection).</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">HealthTech</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">SIH 2025</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 text-purple-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">Collaborative Dashboard</h3>
+      <p class="text-slate-400 text-sm mb-4">Real-time multi-user interaction system using SocketIO and lightweight SQLite storage for cloud deployment.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Flask</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">SocketIO</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Render</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">AI Expense Tracker</h3>
+      <p class="text-slate-400 text-sm mb-4">Scalable full-stack tracking system with Mongoose schema management and automated RESTful CRUD operations.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Node.js</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">MongoDB</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 text-orange-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">AI Meal Generator</h3>
+      <p class="text-slate-400 text-sm mb-4">Personalized system utilizing ML to generate health-optimized meal plans based on user profiles.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">ML</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">HealthTech</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 text-indigo-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">Retinopathy Prediction</h3>
+      <p class="text-slate-400 text-sm mb-4">Deep learning classification system to detect diabetic retinopathy from retinal scans with high accuracy.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Computer Vision</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">CNN</span>
+      </div>
+    </div>
+
+    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+      <div class="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6 text-green-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-3">Snrkshn</h3>
+      <p class="text-slate-400 text-sm mb-4">IoT-based waste segregation and collection optimization. Runner-up at HACK-War Hackathon 2024.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">IoT</span>
+        <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">Sustainability</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <footer class="py-12 glass text-center">
+    <div class="flex justify-center gap-6 mb-8 text-2xl">
+      <a href="https://linkedin.com/in/maahi-joshi" target="_blank" class="hover:text-neonBlue">LinkedIn</a>
+      <a href="https://github.com/Maahijoshi28" target="_blank" class="hover:text-neonBlue">GitHub</a>
+      <a href="mailto:maahijoshi28@gmail.com" class="hover:text-neonBlue transition-colors">Email</a>
+      <a href="tel:+919528183180" class="hover:text-neonBlue transition-colors">+91 9528183180</a>
+    </div>
+    <p class="text-slate-500 text-sm">© 2026 Maahi Joshi | Built with ⚡ in Chandigarh [Mohali: Punjab, India]</p>
+  </footer>
+
+  <script>
+    const text = [
+      "Final-Year BE-CSE (AIML) Student",
+      "AI Research Intern @ Infosys",
+      "Specializing in Agentic AI & RAG",
+      "Building Multi-Modal Robotic Models"
+    ];
+    let i=0, j=0;
+    const el=document.getElementById("typingText");
+    function type(){
+      if(j<text[i].length){
+        el.textContent+=text[i][j++];
+        setTimeout(type, 50);
+      } else setTimeout(erase, 1500);
+    }
+    function erase(){
+      if(j>0){
+        el.textContent=text[i].slice(0, --j);
+        setTimeout(erase, 30);
+      } else {
+        i=(i+1)%text.length;
+        setTimeout(type, 500);
+      }
+    }
+    type();
+  </script>
+</body>
+</html>
