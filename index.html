@@ -5,6 +5,7 @@
   <title>MAAHI JOSHI | AI Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -21,44 +22,293 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-    
-    .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #050a1a;
+      overflow-x: hidden;
     }
-    
+
+    /* ============ 3D BACKGROUND CANVAS ============ */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Digital grid matrix overlay */
+    #grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 210, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 210, 255, 0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 0%, transparent 75%);
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 0%, transparent 75%);
+      animation: gridDrift 40s linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes gridDrift {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 96px 48px, 48px 96px; }
+    }
+
+    #vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 90% 60% at 50% 0%, rgba(5,10,26,0.15), transparent 60%),
+        radial-gradient(ellipse 120% 80% at 50% 100%, rgba(5,10,26,0.6), transparent 60%),
+        linear-gradient(180deg, rgba(5,10,26,0.4) 0%, rgba(5,10,26,0.08) 15%, rgba(5,10,26,0.08) 85%, rgba(5,10,26,0.5) 100%);
+    }
+
+    /* ============ GLASSMORPHISM ============ */
+    .glass {
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 0 40px rgba(0, 210, 255, 0.025),
+        0 10px 40px rgba(0, 0, 0, 0.45),
+        0 0 50px rgba(0, 210, 255, 0.05);
+      position: relative;
+    }
+
     .text-gradient {
       background: linear-gradient(90deg, #00d2ff, #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    .project-card:hover {
-      box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
-      border-color: rgba(0, 210, 255, 0.4);
+      background-clip: text;
     }
 
     .blob {
       position: absolute;
       width: 400px;
       height: 400px;
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(52, 211, 153, 0.2) 100%);
-      filter: blur(80px);
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.12) 0%, rgba(52, 211, 153, 0.12) 100%);
+      filter: blur(90px);
       border-radius: 50%;
       z-index: -1;
+      pointer-events: none;
     }
+
+    [data-depth] { will-change: transform; transition: transform 0.05s linear; }
+
+    /* ============ NAV ============ */
+    nav a { position: relative; }
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -4px;
+      width: 0%; height: 1px;
+      background: linear-gradient(90deg, #00d2ff, #00ff87);
+      transition: width 0.3s ease;
+    }
+    nav a:hover::after { width: 100%; }
+
+    /* ============ EXPERIENCE BLOCKS: NEON SURGE ON HOVER ============ */
+    .experience-card {
+      position: relative;
+      padding: 1.75rem 1.75rem 1.75rem 2rem;
+      border-radius: 1.25rem;
+      transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease, border-color 0.4s ease;
+      border: 1px solid transparent;
+    }
+    .experience-card:hover {
+      background: rgba(255, 255, 255, 0.025);
+      transform: translateX(4px);
+      border-color: rgba(0, 210, 255, 0.25);
+      box-shadow: 0 0 0 1px rgba(0, 210, 255, 0.08), 0 12px 40px rgba(0, 210, 255, 0.1);
+    }
+    .experience-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0.4rem; bottom: 0.4rem;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(0,210,255,0.35), rgba(0,255,135,0.35));
+      border-radius: 2px;
+    }
+    .experience-dot {
+      position: absolute;
+      width: 14px; height: 14px;
+      left: -7px; top: 1.9rem;
+      border-radius: 50%;
+      transition: box-shadow 0.4s ease, background 0.6s ease;
+    }
+    .experience-card:hover .experience-dot {
+      animation: surgePulse 1.4s ease-in-out infinite;
+    }
+    @keyframes surgePulse {
+      0%, 100% { box-shadow: 0 0 8px 2px rgba(0, 210, 255, 0.6); background: #00d2ff; }
+      50% { box-shadow: 0 0 14px 5px rgba(0, 255, 135, 0.75); background: #00ff87; }
+    }
+
+    /* ============ PROJECT CARDS: 3D TILT + CURSOR GLOW ============ */
+    .project-card {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      isolation: isolate;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.35s ease, border-color 0.35s ease;
+      --mx: 50%;
+      --my: 50%;
+      text-decoration: none;
+      color: inherit;
+      will-change: transform;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0;
+      background: radial-gradient(420px circle at var(--mx) var(--my),
+        rgba(0, 210, 255, 0.18), rgba(0, 255, 135, 0.12) 35%, transparent 68%);
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(420px circle at var(--mx) var(--my),
+        rgba(0, 210, 255, 0.65), rgba(0, 255, 135, 0.45) 45%, transparent 70%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .project-card:hover, .project-card:focus-visible {
+      box-shadow: 0 24px 55px rgba(0, 210, 255, 0.18), 0 0 0 1px rgba(0, 210, 255, 0.14);
+    }
+    .project-card:hover::before, .project-card:hover::after,
+    .project-card:focus-visible::before, .project-card:focus-visible::after { opacity: 1; }
+
+    .card-shine {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.09) 35%, transparent 50%);
+      background-size: 250% 250%;
+      background-position: var(--mx) var(--my);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    .project-card:hover .card-shine { opacity: 1; }
+
+    .card-arrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      position: relative; z-index: 1;
+    }
+    .project-card:hover .card-arrow, .project-card:focus-visible .card-arrow {
+      opacity: 1; transform: translateX(0);
+    }
+    .project-card > * { position: relative; z-index: 1; }
+
+    /* ============ SKILL TAGS: NEON SURGE ============ */
+    .tag {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      display: inline-block;
+      overflow: hidden;
+    }
+    .tag::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,210,255,0.35), rgba(0,255,135,0.35), rgba(0,210,255,0.35));
+      background-size: 200% 100%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+      animation: tagSurge 2.5s linear infinite paused;
+    }
+    .tag:hover {
+      color: white;
+      border-color: rgba(0, 210, 255, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.22);
+    }
+    .tag:hover::before {
+      opacity: 0.35;
+      animation-play-state: running;
+    }
+    @keyframes tagSurge {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* ============ CTA BUTTON GLOW ============ */
+    .cta-btn { position: relative; overflow: hidden; }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(90deg, #00d2ff, #00ff87, #00d2ff);
+      background-size: 200% 100%;
+      z-index: -1;
+      filter: blur(14px);
+      opacity: 0.55;
+      animation: ctaShift 4s linear infinite;
+    }
+    @keyframes ctaShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      html { scroll-behavior: auto; }
+      #grid-overlay { animation: none; }
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #050a1a; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #00d2ff, #00ff87); border-radius: 10px; }
   </style>
 </head>
 
 <body class="bg-midnight text-slate-200">
 
+  <canvas id="bg-canvas"></canvas>
+  <div id="grid-overlay"></div>
+  <div id="vignette"></div>
+
   <div class="blob top-0 left-[-100px]"></div>
   <div class="blob bottom-0 right-[-100px]"></div>
 
   <nav class="fixed top-0 w-full glass z-50 px-6 py-4 flex justify-between items-center">
-    <div class="text-xl font-extrabold tracking-tighter text-gradient">MJ.AI</div>
+    <div class="text-xl font-extrabold tracking-tighter text-gradient">MJ</div>
     <div class="hidden md:flex gap-8 text-sm font-medium uppercase tracking-widest">
       <a href="#experience" class="hover:text-neonBlue transition">Experience</a>
       <a href="#projects" class="hover:text-neonBlue transition">Projects</a>
@@ -67,24 +317,24 @@
   </nav>
 
   <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
-    <h1 class="text-6xl md:text-8xl font-extrabold mb-6 tracking-tight">MAAHI <span class="text-gradient">JOSHI</span></h1>
+    <h1 data-depth="-0.04" class="text-6xl md:text-8xl font-extrabold mb-6 tracking-tight">MAAHI <span class="text-gradient">JOSHI</span></h1>
     <div class="h-8 mb-8">
         <p id="typingText" class="text-neonBlue text-xl md:text-2xl font-light tracking-wide"></p>
     </div>
-    <p class="max-w-xl text-slate-400 leading-relaxed text-lg">
+    <p data-depth="-0.02" class="max-w-xl text-slate-400 leading-relaxed text-lg">
       Specializing in <span class="text-white font-semibold">Agentic AI</span> and <span class="text-white font-semibold">Robotic Intelligence</span>. Currently architecting cognitive engines and multi-modal action models.
     </p>
     <div class="mt-12 flex gap-4">
-      <a href="#projects" class="px-8 py-4 bg-gradient-to-r from-neonBlue to-emerald text-midnight rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all">Explore My Work</a>
+      <a href="#projects" class="cta-btn px-8 py-4 bg-gradient-to-r from-neonBlue to-emerald text-midnight rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all">Explore My Work</a>
     </div>
   </section>
 
 <section id="experience" class="px-6 md:px-20 py-24">
-    <h2 class="text-4xl font-bold mb-16 text-gradient">Industry Experience</h2>
-    <div class="space-y-12 max-w-4xl">
-      
-      <div class="relative pl-8 border-l border-neonBlue/30">
-        <div class="absolute w-4 h-4 bg-purple-500 rounded-full left-[-8px] top-1 shadow-[0_0_10px_#a855f7]"></div>
+    <h2 data-depth="-0.03" class="text-4xl font-bold mb-16 text-gradient">Industry Experience</h2>
+    <div class="space-y-6 max-w-4xl">
+
+      <div class="experience-card relative pl-8 border-l border-neonBlue/30">
+        <div class="experience-dot absolute w-4 h-4 bg-purple-500 rounded-full left-[-8px] top-1 shadow-[0_0_10px_#a855f7]"></div>
         <h3 class="text-2xl font-bold">Remote Intern | IIT Kanpur (Dept. of Electrical Eng.)</h3>
         <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Feb 2024 - Mar 2024</span>
         <p class="mt-1 text-xs text-slate-500 italic">In collaboration with Bolt IoT</p>
@@ -94,8 +344,8 @@
         </ul>
       </div>
 
-      <div class="relative pl-8 border-l border-neonBlue/30">
-        <div class="absolute w-4 h-4 bg-neonBlue rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00d2ff]"></div>
+      <div class="experience-card relative pl-8 border-l border-neonBlue/30">
+        <div class="experience-dot absolute w-4 h-4 bg-neonBlue rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00d2ff]"></div>
         <h3 class="text-2xl font-bold">AI Research Intern | Infosys Springboard</h3>
         <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Dec 2025 - Feb 2026</span>
         <ul class="mt-4 text-slate-400 space-y-2 list-disc list-inside">
@@ -104,8 +354,8 @@
         </ul>
       </div>
 
-      <div class="relative pl-8 border-l border-neonBlue/30">
-        <div class="absolute w-4 h-4 bg-emerald rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00ff87]"></div>
+      <div class="experience-card relative pl-8 border-l border-neonBlue/30">
+        <div class="experience-dot absolute w-4 h-4 bg-emerald rounded-full left-[-8px] top-1 shadow-[0_0_10px_#00ff87]"></div>
         <h3 class="text-2xl font-bold">AIML Industrial Training | IIT Ropar (Collaboration)</h3>
         <span class="text-emerald text-sm font-semibold uppercase tracking-wider">Jan 2026 - Present</span>
         <ul class="mt-4 text-slate-400 space-y-2 list-disc list-inside">
@@ -116,12 +366,12 @@
 
     </div>
   </section>
-  
-  <section id="skills" class="px-6 md:px-20 py-24 bg-midnight">
-  <h2 class="text-4xl font-bold mb-16 text-gradient text-center">Technical Expertise</h2>
-  
+
+  <section id="skills" class="px-6 md:px-20 py-24">
+  <h2 data-depth="-0.03" class="text-4xl font-bold mb-16 text-gradient text-center">Technical Expertise</h2>
+
   <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-    
+
     <div class="glass p-8 rounded-3xl border-t-2 border-neonBlue">
       <div class="flex items-center gap-4 mb-6">
         <div class="p-3 bg-neonBlue/20 rounded-xl text-neonBlue">
@@ -225,44 +475,29 @@
   </div>
 </section>
 
-<style>
-  .tag {
-    background: rgba(255, 255, 255, 0.05);
-    color: #94a3b8;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-  }
-  .tag:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-color: rgba(0, 210, 255, 0.5);
-    transform: translateY(-2px);
-  }
-</style>
+<section id="projects" class="px-6 md:px-20 py-24">
+  <h2 data-depth="-0.03" class="text-4xl font-bold mb-16 text-center text-gradient">Research & Development</h2>
 
-<section id="projects" class="px-6 md:px-20 py-24 bg-slateDark/50">
-  <h2 class="text-4xl font-bold mb-16 text-center text-gradient">Research & Development</h2>
-  
   <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/Cerebro" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-emerald/20 rounded-2xl flex items-center justify-center mb-6 text-emerald">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">Cerebro</h3>
       <p class="text-slate-400 text-sm mb-4">An advanced multi-agent AI framework built with LangGraph and Python that orchestrates autonomous, self-correcting agent teams to execute deep, domain-specific research and formal report generation.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Groq Cloud & Llama 3.3</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">LangGraph</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Tavily AI Search</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Streamlit</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/AI-Smart-Scraper" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-amber-400/20 rounded-2xl flex items-center justify-center mb-6 text-amber-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -270,104 +505,119 @@
       </div>
       <h3 class="text-xl font-bold mb-3">AI Smart Scraper</h3>
       <p class="text-slate-400 text-sm mb-4">Developed an intelligent data extraction pipeline and zero-shot semantic parser that autonomously isolates and structures user-defined fields from dynamic raw web HTML and text data.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Groq Cloud & Llama 3</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">BeautifulSoup4</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Streamlit</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Render Cloud</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/Autonomous-Cognitive-Engine" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-neonBlue/20 rounded-2xl flex items-center justify-center mb-6 text-neonBlue">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">Autonomous Cognitive Engine</h3>
       <p class="text-slate-400 text-sm mb-4">Architected an agentic framework for long-horizon research using ReAct patterns and persistent memory RAG pipelines.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">LangGraph</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">AI Agents</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/BharatTeleMed" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center mb-6 text-red-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">BharatTeleMed</h3>
       <p class="text-slate-400 text-sm mb-4">Telemedicine platform bridging healthcare gaps. Awarded Runner-up at Tekathon (SIH 2025 Selection).</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">HealthTech</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">SIH 2025</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/Collaborative-Dashboard" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 text-purple-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">Collaborative Dashboard</h3>
       <p class="text-slate-400 text-sm mb-4">Real-time multi-user interaction system using SocketIO and lightweight SQLite storage for cloud deployment.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Flask</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">SocketIO</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-amber-400 border border-white/10">Render</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/AI-Expense-Tracker" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 text-blue-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">AI Expense Tracker</h3>
       <p class="text-slate-400 text-sm mb-4">Scalable full-stack tracking system with Mongoose schema management and automated RESTful CRUD operations.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Node.js</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">MongoDB</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/AI-Meal-Generator" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6 text-orange-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">AI Meal Generator</h3>
       <p class="text-slate-400 text-sm mb-4">Personalized system utilizing ML to generate health-optimized meal plans based on user profiles.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">ML</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">HealthTech</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/Retinopathy-Prediction" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 text-indigo-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">Retinopathy Prediction</h3>
       <p class="text-slate-400 text-sm mb-4">Deep learning classification system to detect diabetic retinopathy from retinal scans with high accuracy.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">Computer Vision</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">CNN</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
-    <div class="project-card glass p-8 rounded-3xl transition-all duration-300">
+    <a href="https://github.com/Maahijoshi28/Snrkshn" target="_blank" rel="noopener noreferrer" class="project-card glass p-8 rounded-3xl">
+      <div class="card-shine"></div>
       <div class="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6 text-green-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
       </div>
       <h3 class="text-xl font-bold mb-3">Snrkshn</h3>
       <p class="text-slate-400 text-sm mb-4">IoT-based waste segregation and collection optimization. Runner-up at HACK-War Hackathon 2024.</p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2 mb-4">
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-neonBlue border border-white/10">IoT</span>
         <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-emerald border border-white/10">Sustainability</span>
       </div>
-    </div>
+      <span class="card-arrow text-sm font-semibold text-neonBlue">View Repository <span aria-hidden="true">&rarr;</span></span>
+    </a>
 
   </div>
 </section>
 
-  <footer class="py-12 glass text-center">
-    <div class="flex justify-center gap-6 mb-8 text-2xl">
+  <footer id="contact" class="py-12 glass text-center">
+    <div class="flex justify-center gap-6 mb-8 text-2xl flex-wrap px-4">
       <a href="https://linkedin.com/in/maahi-joshi" target="_blank" class="hover:text-neonBlue">LinkedIn</a>
       <a href="https://github.com/Maahijoshi28" target="_blank" class="hover:text-neonBlue">GitHub</a>
       <a href="mailto:maahijoshi28@gmail.com" class="hover:text-neonBlue transition-colors">Email</a>
@@ -377,30 +627,369 @@
   </footer>
 
   <script>
+    /* ================= TYPING ANIMATION ================= */
     const text = [
       "Final-Year BE-CSE (AIML) Student",
       "AI Research Intern @ Infosys",
       "Specializing in Agentic AI & RAG",
       "Building Multi-Modal Robotic Models"
     ];
-    let i=0, j=0;
-    const el=document.getElementById("typingText");
-    function type(){
-      if(j<text[i].length){
-        el.textContent+=text[i][j++];
+    let i = 0, j = 0;
+    const el = document.getElementById("typingText");
+    function type() {
+      if (j < text[i].length) {
+        el.textContent += text[i][j++];
         setTimeout(type, 50);
       } else setTimeout(erase, 1500);
     }
-    function erase(){
-      if(j>0){
-        el.textContent=text[i].slice(0, --j);
+    function erase() {
+      if (j > 0) {
+        el.textContent = text[i].slice(0, --j);
         setTimeout(erase, 30);
       } else {
-        i=(i+1)%text.length;
+        i = (i + 1) % text.length;
         setTimeout(type, 500);
       }
     }
     type();
+
+    /* ================= PROJECT CARD 3D TILT MATRIX + CURSOR GLOW ================= */
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    if (!isCoarsePointer) {
+      document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const cx = rect.width / 2;
+          const cy = rect.height / 2;
+          const rotX = ((y - cy) / cy) * -7;
+          const rotY = ((x - cx) / cx) * 7;
+          card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px) scale(1.01)`;
+          card.style.setProperty('--mx', `${x}px`);
+          card.style.setProperty('--my', `${y}px`);
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+        });
+      });
+    }
+
+    /* ================= DEPTH PARALLAX FOR TEXT LAYERS ================= */
+    const depthLayers = Array.from(document.querySelectorAll('[data-depth]'));
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function updateDepthParallax() {
+      if (prefersReducedMotion) return;
+      const wh = window.innerHeight;
+      depthLayers.forEach(elx => {
+        const depth = parseFloat(elx.dataset.depth) || 0;
+        const rect = elx.getBoundingClientRect();
+        const offset = (rect.top + rect.height / 2 - wh / 2);
+        elx.style.transform = `translateY(${offset * depth}px)`;
+      });
+    }
+
+    /* ================= THREE.JS SYNAPTIC PARTICLE NETWORK ================= */
+    (function initNeuralBackground() {
+      const canvas = document.getElementById('bg-canvas');
+
+      function fallbackToStaticPage() {
+        updateDepthParallax();
+        window.addEventListener('scroll', updateDepthParallax, { passive: true });
+        window.addEventListener('resize', updateDepthParallax);
+      }
+
+      if (!canvas || typeof THREE === 'undefined') { fallbackToStaticPage(); return; }
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      } catch (err) {
+        fallbackToStaticPage();
+        return;
+      }
+
+      const isMobile = window.innerWidth < 768;
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 3000);
+      camera.position.z = 640;
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      /* -------- Particle nodes -------- */
+      const PARTICLE_COUNT = isMobile ? 260 : 850;
+      const SPREAD_X = 1500, SPREAD_Y = 950, SPREAD_Z = 900;
+      const LINK_DIST = isMobile ? 130 : 150;
+      const LINK_DIST_SQ = LINK_DIST * LINK_DIST;
+      const MAX_LINES = isMobile ? 350 : 1600;
+
+      const basePositions = new Float32Array(PARTICLE_COUNT * 3);
+      const positions = new Float32Array(PARTICLE_COUNT * 3);
+      const velocities = new Float32Array(PARTICLE_COUNT * 3);
+      const seeds = new Float32Array(PARTICLE_COUNT);
+
+      for (let p = 0; p < PARTICLE_COUNT; p++) {
+        const x = (Math.random() - 0.5) * SPREAD_X;
+        const y = (Math.random() - 0.5) * SPREAD_Y;
+        const z = (Math.random() - 0.5) * SPREAD_Z;
+        basePositions[p * 3] = x; basePositions[p * 3 + 1] = y; basePositions[p * 3 + 2] = z;
+        positions[p * 3] = x; positions[p * 3 + 1] = y; positions[p * 3 + 2] = z;
+        seeds[p] = Math.random() * Math.PI * 2;
+      }
+
+      const nodeGeometry = new THREE.BufferGeometry();
+      nodeGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      nodeGeometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+
+      const nodeVertexShader = `
+        attribute float aSeed;
+        uniform float uTime;
+        varying float vPulse;
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          float pulse = 0.55 + 0.45 * sin(uTime * 1.6 + aSeed * 3.0);
+          vPulse = pulse;
+          float size = (2.0 + pulse * 2.4) * (440.0 / -mvPosition.z);
+          gl_PointSize = size;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `;
+      const nodeFragmentShader = `
+        precision mediump float;
+        varying float vPulse;
+        uniform vec3 uColorA;
+        uniform vec3 uColorB;
+        void main() {
+          vec2 uv = gl_PointCoord - vec2(0.5);
+          float d = length(uv);
+          if (d > 0.5) discard;
+          float glow = smoothstep(0.5, 0.0, d);
+          vec3 color = mix(uColorA, uColorB, vPulse);
+          gl_FragColor = vec4(color, glow * vPulse * 0.9);
+        }
+      `;
+
+      const nodeMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uColorA: { value: new THREE.Color(0x00d2ff) },
+          uColorB: { value: new THREE.Color(0x00ff87) }
+        },
+        vertexShader: nodeVertexShader,
+        fragmentShader: nodeFragmentShader,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
+      group.add(nodePoints);
+
+      /* -------- Dynamic proximity connection lines (recomputed every frame) -------- */
+      const linkPositionsArr = new Float32Array(MAX_LINES * 6);
+      const linkColorsArr = new Float32Array(MAX_LINES * 6);
+      const linkGeometry = new THREE.BufferGeometry();
+      linkGeometry.setAttribute('position', new THREE.BufferAttribute(linkPositionsArr, 3).setUsage(THREE.DynamicDrawUsage));
+      linkGeometry.setAttribute('color', new THREE.BufferAttribute(linkColorsArr, 3).setUsage(THREE.DynamicDrawUsage));
+      linkGeometry.setDrawRange(0, 0);
+
+      const linkMaterial = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const linkLines = new THREE.LineSegments(linkGeometry, linkMaterial);
+      group.add(linkLines);
+
+      const colorA = new THREE.Color(0x00d2ff);
+      const colorB = new THREE.Color(0x00ff87);
+      const mixedColor = new THREE.Color();
+
+      function rebuildConnections() {
+        let lineCount = 0;
+        const maxLineCount = MAX_LINES;
+        outer:
+        for (let a = 0; a < PARTICLE_COUNT; a++) {
+          const ax = positions[a * 3], ay = positions[a * 3 + 1], az = positions[a * 3 + 2];
+          for (let b = a + 1; b < PARTICLE_COUNT; b++) {
+            const bx = positions[b * 3], by = positions[b * 3 + 1], bz = positions[b * 3 + 2];
+            const dx = ax - bx;
+            if (dx > LINK_DIST || dx < -LINK_DIST) continue;
+            const dy = ay - by;
+            if (dy > LINK_DIST || dy < -LINK_DIST) continue;
+            const dz = az - bz;
+            if (dz > LINK_DIST || dz < -LINK_DIST) continue;
+            const distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq < LINK_DIST_SQ) {
+              const idx6 = lineCount * 6;
+              linkPositionsArr[idx6] = ax; linkPositionsArr[idx6 + 1] = ay; linkPositionsArr[idx6 + 2] = az;
+              linkPositionsArr[idx6 + 3] = bx; linkPositionsArr[idx6 + 4] = by; linkPositionsArr[idx6 + 5] = bz;
+
+              const t = 1.0 - Math.sqrt(distSq) / LINK_DIST;
+              mixedColor.copy(colorA).lerp(colorB, (Math.sin(a * 0.7) + 1) / 2);
+              const r = mixedColor.r * t, g = mixedColor.g * t, bcol = mixedColor.b * t;
+              linkColorsArr[idx6] = r; linkColorsArr[idx6 + 1] = g; linkColorsArr[idx6 + 2] = bcol;
+              linkColorsArr[idx6 + 3] = r; linkColorsArr[idx6 + 4] = g; linkColorsArr[idx6 + 5] = bcol;
+
+              lineCount++;
+              if (lineCount >= maxLineCount) break outer;
+            }
+          }
+        }
+        linkGeometry.attributes.position.needsUpdate = true;
+        linkGeometry.attributes.color.needsUpdate = true;
+        linkGeometry.setDrawRange(0, lineCount * 2);
+      }
+
+      /* -------- Mouse: inertia camera tracking + particle repulsion field -------- */
+      const raycaster = new THREE.Raycaster();
+      const mouseNDC = new THREE.Vector2(9999, 9999);
+      const mousePlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+      const mouseWorld = new THREE.Vector3();
+      let mouseActive = false;
+
+      const REPEL_RADIUS = isMobile ? 0 : 160;
+      const REPEL_RADIUS_SQ = REPEL_RADIUS * REPEL_RADIUS;
+      const REPEL_STRENGTH = 2.4;
+      const SPRING_K = 0.012;
+      const DAMPING = 0.90;
+
+      function setPointer(clientX, clientY) {
+        mouseNDC.x = (clientX / window.innerWidth) * 2 - 1;
+        mouseNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+        mouseActive = true;
+      }
+
+      if (!prefersReducedMotion) {
+        window.addEventListener('mousemove', (e) => setPointer(e.clientX, e.clientY), { passive: true });
+        window.addEventListener('touchmove', (e) => {
+          if (e.touches && e.touches.length > 0) setPointer(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+        window.addEventListener('mouseleave', () => { mouseActive = false; });
+      }
+
+      let camTargetX = 0, camTargetY = 0;
+      let rotTargetX = 0, rotTargetY = 0;
+      let scrollFrac = 0;
+
+      function getScrollFraction() {
+        const doc = document.documentElement;
+        const scrollHeight = doc.scrollHeight - doc.clientHeight;
+        if (scrollHeight <= 0) return 0;
+        return Math.min(Math.max(window.scrollY / scrollHeight, 0), 1);
+      }
+
+      window.addEventListener('scroll', () => {
+        scrollFrac = getScrollFraction();
+        updateDepthParallax();
+      }, { passive: true });
+
+      /* Throttled / debounced resize handler for stable 60fps */
+      let resizeTimeout = null;
+      function handleResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        updateDepthParallax();
+      }
+      window.addEventListener('resize', () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(handleResize, 120);
+      });
+
+      let isVisible = true;
+      document.addEventListener('visibilitychange', () => {
+        isVisible = document.visibilityState === 'visible';
+      });
+
+      const clock = new THREE.Clock();
+      let frameCounter = 0;
+
+      function updatePhysics() {
+        if (mouseActive && !prefersReducedMotion && REPEL_RADIUS > 0) {
+          raycaster.setFromCamera(mouseNDC, camera);
+          raycaster.ray.intersectPlane(mousePlane, mouseWorld);
+        }
+
+        for (let p = 0; p < PARTICLE_COUNT; p++) {
+          const idx = p * 3;
+          let vx = velocities[idx], vy = velocities[idx + 1], vz = velocities[idx + 2];
+
+          /* spring pull back toward base position */
+          vx += (basePositions[idx] - positions[idx]) * SPRING_K;
+          vy += (basePositions[idx + 1] - positions[idx + 1]) * SPRING_K;
+          vz += (basePositions[idx + 2] - positions[idx + 2]) * SPRING_K;
+
+          /* mouse repulsion */
+          if (mouseActive && !prefersReducedMotion && REPEL_RADIUS > 0) {
+            const dx = positions[idx] - mouseWorld.x;
+            const dy = positions[idx + 1] - mouseWorld.y;
+            const dz = positions[idx + 2] - mouseWorld.z;
+            const distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq < REPEL_RADIUS_SQ && distSq > 0.001) {
+              const dist = Math.sqrt(distSq);
+              const force = (1 - dist / REPEL_RADIUS) * REPEL_STRENGTH;
+              vx += (dx / dist) * force;
+              vy += (dy / dist) * force;
+              vz += (dz / dist) * force;
+            }
+          }
+
+          vx *= DAMPING; vy *= DAMPING; vz *= DAMPING;
+
+          positions[idx] += vx;
+          positions[idx + 1] += vy;
+          positions[idx + 2] += vz;
+
+          velocities[idx] = vx; velocities[idx + 1] = vy; velocities[idx + 2] = vz;
+        }
+        nodeGeometry.attributes.position.needsUpdate = true;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (!isVisible) return;
+
+        const elapsed = clock.getElapsedTime();
+        nodeMaterial.uniforms.uTime.value = elapsed;
+
+        updatePhysics();
+
+        /* Recompute connection graph every 2nd frame to protect perf on dense fields */
+        frameCounter++;
+        if (frameCounter % 2 === 0) rebuildConnections();
+
+        if (!prefersReducedMotion) {
+          rotTargetY += (mouseNDC.x * 0.32 - rotTargetY) * 0.035;
+          rotTargetX += (-mouseNDC.y * 0.2 - rotTargetX) * 0.035;
+          group.rotation.y = rotTargetY + scrollFrac * 0.6;
+          group.rotation.x = rotTargetX;
+
+          camTargetX += (mouseNDC.x * 55 - camTargetX) * 0.02;
+          camTargetY += (-mouseNDC.y * 55 - camTargetY) * 0.02;
+          camera.position.x = camTargetX;
+          camera.position.y = camTargetY;
+          camera.position.z = 640 - scrollFrac * 200;
+        } else {
+          group.rotation.y = elapsed * 0.01;
+        }
+
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+      }
+
+      rebuildConnections();
+      updateDepthParallax();
+      animate();
+    })();
   </script>
 </body>
 </html>
